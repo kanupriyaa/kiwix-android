@@ -150,6 +150,7 @@ public class MainActivity extends BaseActivity implements WebViewCallback,
   private static final int REQUEST_HISTORY_ITEM_CHOSEN = 99;
   private static final String NEW_TAB = "NEW_TAB";
   private static final String HOME_URL = "file:///android_asset/home.html";
+  private final String requiredPermission = "android.permission.WRITE_SETTINGS";
   public static boolean isFullscreenOpened;
   public static boolean refresh;
   public static boolean wifiOnly;
@@ -372,7 +373,10 @@ public class MainActivity extends BaseActivity implements WebViewCallback,
     drawerLayout.setDescendantFocusability(ViewGroup.FOCUS_BLOCK_DESCENDANTS);
 
     wifiHotspotManager = new WifiHotspotManager(this);
-    wifiHotspotManager.showWritePermissionSettings(true);
+    int checkVal = getApplicationContext().checkCallingOrSelfPermission(requiredPermission);
+    if (checkVal == PackageManager.PERMISSION_DENIED) {
+      wifiHotspotManager.showWritePermissionSettings(true);
+    }
   }
 
   //End of onCreate
@@ -905,8 +909,12 @@ public class MainActivity extends BaseActivity implements WebViewCallback,
       case R.id.menu_wifi_hotspot:
         if (wifiHotspotManager.isWifiApEnabled()) {
           wifiHotspotManager.setWifiEnabled(null, false);
+          Toast.makeText(this, "Wifi Hotspot Disabled", Toast.LENGTH_LONG)
+              .show();
         } else {
           wifiHotspotManager.setWifiEnabled(null, true);
+          Toast.makeText(this, "Wifi Hotspot Enabled", Toast.LENGTH_LONG)
+              .show();
         }
 
       default:
@@ -1311,6 +1319,8 @@ public class MainActivity extends BaseActivity implements WebViewCallback,
       }
     }
     updateWidgets(this);
+
+    wifiHotspotManager.showWritePermissionSettings(false);
   }
 
   private void updateBottomToolbarVisibility() {
