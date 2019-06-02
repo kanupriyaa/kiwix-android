@@ -920,27 +920,10 @@ public class MainActivity extends BaseActivity implements WebViewCallback,
         openExternalUrl(intentSupportKiwix);
 
       case R.id.menu_wifi_hotspot:
-        //Check if user's hotspot is enabled
-        if (isMobileDataEnabled(this)) {
-
-          mobileDataDialog();
-
-        }
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
-
           toggleHotspot();
         } else {
-          // For API<26 we use this
-          // Checks if wifi access point is already enabled then turns it off, otherwise enables it.
-          if (wifiHotspotManager.isWifiApEnabled()) {
-            wifiHotspotManager.setWifiEnabled(null, false);
-            Toast.makeText(this, "Wifi Hotspot Disabled", Toast.LENGTH_LONG)
-                .show();
-          } else {
-            wifiHotspotManager.setWifiEnabled(null, true);
-            Toast.makeText(this, "Wifi Hotspot Enabled", Toast.LENGTH_LONG)
-                .show();
-          }
+          switchHotspot();
         }
 
       default:
@@ -950,22 +933,39 @@ public class MainActivity extends BaseActivity implements WebViewCallback,
     return super.onOptionsItemSelected(item);
   }
 
-  private void mobileDataDialog() {
-    AlertDialog.Builder builder = new AlertDialog.Builder(this, dialogStyle());
+  // For API<26 we use this
+  // Checks if wifi access point is already enabled then turns it off, otherwise enables it.
+  private void switchHotspot() {
+    if (wifiHotspotManager.isWifiApEnabled()) {
+      wifiHotspotManager.setWifiEnabled(null, false);
+    } else {
+      //Check if user's hotspot is enabled
+      if (isMobileDataEnabled(this)) {
 
-    builder.setPositiveButton(this.getString(R.string.yes), (dialog, id) -> {
-      disableMobileData();
-    });
-    builder.setNegativeButton(android.R.string.no, (dialog, id) -> {
-      //Do nothing
-    });
-    builder.setTitle(this.getString(R.string.mobile_data_enabled));
-    builder.setMessage(
-        this.getString(R.string.mobile_data_message) + "\n" + this.getString(
-            R.string.mobile_data_message_confirmation)
-    );
-    AlertDialog dialog = builder.create();
-    dialog.show();
+        mobileDataDialog();
+      } else {
+        wifiHotspotManager.setWifiEnabled(null, true);
+      }
+    }
+  }
+  private void mobileDataDialog() {
+    if (Build.VERSION.SDK_INT < VERSION_CODES.O) {
+      AlertDialog.Builder builder = new AlertDialog.Builder(this, dialogStyle());
+
+      builder.setPositiveButton(this.getString(R.string.yes), (dialog, id) -> {
+        disableMobileData();
+      });
+      builder.setNegativeButton(android.R.string.no, (dialog, id) -> {
+        wifiHotspotManager.setWifiEnabled(null, true);
+      });
+      builder.setTitle(this.getString(R.string.mobile_data_enabled));
+      builder.setMessage(
+          this.getString(R.string.mobile_data_message) + "\n" + this.getString(
+              R.string.mobile_data_message_confirmation)
+      );
+      AlertDialog dialog = builder.create();
+      dialog.show();
+    }
   }
 
   @RequiresApi(api = VERSION_CODES.O)
