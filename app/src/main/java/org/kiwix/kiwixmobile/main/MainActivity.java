@@ -922,8 +922,9 @@ public class MainActivity extends BaseActivity implements WebViewCallback,
       case R.id.menu_wifi_hotspot:
         //Check if user's hotspot is enabled
         if (isMobileDataEnabled(this)) {
-          Toast.makeText(this, "You need to disable mobile data ", Toast.LENGTH_LONG).show();
-          disableMobileData();
+
+          mobileDataDialog();
+
         }
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
 
@@ -947,6 +948,24 @@ public class MainActivity extends BaseActivity implements WebViewCallback,
     }
 
     return super.onOptionsItemSelected(item);
+  }
+
+  private void mobileDataDialog() {
+    AlertDialog.Builder builder = new AlertDialog.Builder(this, dialogStyle());
+
+    builder.setPositiveButton(this.getString(R.string.yes), (dialog, id) -> {
+      disableMobileData();
+    });
+    builder.setNegativeButton(android.R.string.no, (dialog, id) -> {
+      //Do nothing
+    });
+    builder.setTitle(this.getString(R.string.mobile_data_enabled));
+    builder.setMessage(
+        this.getString(R.string.mobile_data_message) + "\n" + this.getString(
+            R.string.mobile_data_message_confirmation)
+    );
+    AlertDialog dialog = builder.create();
+    dialog.show();
   }
 
   @RequiresApi(api = VERSION_CODES.O)
