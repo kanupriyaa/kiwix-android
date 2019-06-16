@@ -63,7 +63,7 @@ class Fat32Checker @Inject constructor(sharedPreferenceUtil: SharedPreferenceUti
     Flowable.interval(1, SECONDS)
         .map {
           ContextCompat.checkSelfPermission(
-              KiwixApplication.getInstance(), permission.WRITE_EXTERNAL_STORAGE
+              KiwixApplication.instance, permission.WRITE_EXTERNAL_STORAGE
           ) == PackageManager.PERMISSION_GRANTED
         }
         .filter { it }

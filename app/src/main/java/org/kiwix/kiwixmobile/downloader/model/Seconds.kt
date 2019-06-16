@@ -9,7 +9,7 @@ inline class Seconds(private val seconds: Int) {
     val HOURS = 60 * MINUTES
     val DAYS = 24 * HOURS
 
-    val context = KiwixApplication.getInstance()
+    val context = KiwixApplication.instance
     return when {
       Math.round(seconds / DAYS) > 0 -> String.format(
           Locale.getDefault(), "%d %s %s", Math.round(seconds / DAYS),

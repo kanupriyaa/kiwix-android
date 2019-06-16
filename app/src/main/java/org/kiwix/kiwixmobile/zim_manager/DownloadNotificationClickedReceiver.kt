@@ -34,7 +34,7 @@ class DownloadNotificationClickedReceiver : BaseBroadcastReceiver() {
     context: Context,
     intent: Intent
   ) {
-    KiwixApplication.getApplicationComponent()
+    KiwixApplication.applicationComponent
         .inject(this)
     if (downloadDao.containsAny(*longArrayFrom(intent.extras))) {
       context.startActivity(

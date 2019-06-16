@@ -24,7 +24,7 @@ fun Book.buildSearchableText(bookUtils: BookUtils): String =
     append("|")
     append(description)
     append("|")
-    append(NetworkUtils.parseURL(KiwixApplication.getInstance(), url))
+    append(NetworkUtils.parseURL(KiwixApplication.instance, url))
     append("|");
     if (bookUtils.localeMap.containsKey(language)) {
       append(bookUtils.localeMap[language]!!.displayLanguage)
